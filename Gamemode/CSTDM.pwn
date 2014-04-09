@@ -749,22 +749,18 @@ public OnPlayerEnterDynamicCP(playerid, checkpointid)
             new Pname[24]; //Pname variable.
             GetPlayerName(playerid, Pname, 24); //Gets the players name.
             if(HouseInformation[x][owner][0] != 0 && !strcmp(Pname, HouseInformation[x][owner][0]))
-            //The line above checks that the owner string has something in it, then it
-            //Will compare it to our current player.
+
             {
                 SetPlayerPos(playerid, HouseInformation[x][TelePos][0], HouseInformation[x][TelePos][1], HouseInformation[x][TelePos][2]); //Sets players position where x = houseid.
                 SetPlayerInterior(playerid, HouseInformation[x][interiors]); //Sets players interior
                 SetPlayerVirtualWorld(playerid, 15500000 + x); //Sets the virtual world
-                //This is used if you want multiple houses per interior.
-                 //Sets the inhouse variable to the house he's in.
+
             }
             if(!HouseInformation[x][owner][0]) SendClientMessage(playerid, -1, "This house is for sale /buy to buy it!");
-            //If there is no owner, it will send a message telling the player to buy it :).
+
             return 1;
-            //We do this so the loop doesn't continue after or it tries to go for more checkpoints
-            //We could alternitivly use break;
         }
-        if(HouseInformation[x][checkpointidx][1] == checkpointid) //If the player enters the house exit.
+        if(HouseInformation[x][checkpointidx][1] == checkpointid) 
         {
             if(InHouse[playerid] == -1)
             {
@@ -822,25 +818,7 @@ public OnPlayerLeaveDynamicCP(playerid, checkpointid)
     return 1;
 }
 
-public OnPlayerExitVehicle(playerid, vehicleid)
-{
-    if(Bomb[playerid] == 1)
-    {
-        new currentveh;
-		currentveh = GetPlayerVehicleID(playerid);
-		GetVehiclePos(currentveh, xxxx, yyyy, zzzz);
-    	SetTimer("BombBoom", 15000, false);
-	}
-    return 1;
-}
 
-forward BombBoom(playerid);
-public BombBoom(playerid)
-{
-	SendClientMessage(playerid, COLOR_ORANGE, "BOOM!");
-	CreateExplosion(xxxx,yyyy,zzzz,7,30.0);
-	Bomb[playerid] = 0;
-}
 public OnPlayerRequestClass(playerid, classid)
 {
     Spawned[playerid] = 0;
@@ -2920,20 +2898,12 @@ stock MySQL_Register(playerid)
     pause(playerid);
     new Query[500];
     mysql_real_escape_string(pInfo[playerid][Nick], pInfo[playerid][Nick]);
-    // escaping the name of the player to avoid sql_injections.
     mysql_real_escape_string(pInfo[playerid][IP], pInfo[playerid][IP]);
-    // escaping the IP of the player to avoid sql_injections.
-    // as you might've seen we haven't escaped the password here because it was already escaped in our register dialog
-    format(Query, sizeof(Query), "INSERT INTO `playerdata` (`nick`, `password`, `ip`) VALUES('%s', '%s', '%s')", pInfo[playerid][Nick], HashPass, pInfo[playerid][IP]); // Here we use the INSERT option and insert the name, password, and ip of the player in the database.
-    // we don't insert the score, admin, or any other variable because its automatically 0.
+    format(Query, sizeof(Query), "INSERT INTO `playerdata` (`nick`, `password`, `ip`) VALUES('%s', '%s', '%s')", pInfo[playerid][Nick], HashPass, pInfo[playerid][IP]); 
     mysql_query(Query);
-    // here we do not need to mysql_store_result or mysql_free_result
-    // because we are only inserting data in the database not selecting it
-    //next we set the players logged variable to 1.
-    //and the isregistered variable to 1 aswell.
     SendClientMessage(playerid, COLOR_SAMP, "You have now been  successfully registered on CountrySide TeamDeathmatch!");
     pInfo[playerid][Logged] = 1;
-    pInfo[playerid][IsRegistered] = 1; // sets the registered variable to 1. meaning registered.
+    pInfo[playerid][IsRegistered] = 1;
     sInfo[playerid][Accounts] ++;
 	format(Query, 500, "UPDATE `ServerInfo` SET `Accounts` = '%d' WHERE `Server` = 'CountryTDM' LIMIT 1",
 	sInfo[playerid][Accounts]);
@@ -3999,28 +3969,6 @@ CMD:goto(playerid, params[])
 	}
 	else SendClientMessage(playerid, COLOR_RED, ""EServ"");
 	return 1;
-}
-
-CMD:email(playerid, params[])
-{
-	new idx, string[256];
-	if(pInfo[playerid][pAdmin] >= 2)
-	{
-		new text[128];
-        GetStringText(params,idx,text);//Custom function to get whole text after first blank space
-        if(!strlen(text)) { SendClientMessage(playerid,COLOR_SAMP," /email [Text]"); return 1; }//We dont want send empty email so we add usage
-        for(new i; i < strlen(text); i ++)//Scan the text line to add some symbol because URL cant contain blank spaces
-        {
-            if(strfind(text[i]," ", true) == 0)//If scan process found blank space its gets replaced with "-" in my case, you can use any other symbol
-            {
-                text[i] = '-';//Result is Hello-World-!
-            }
-        }
-	        format(string,sizeof(string), "c-roleplay.com/test.php?code=44514&msg=%s",text);//Format request URL to PHP file we made before
-			//As you can see url contains code which is used later in PHP file we made
-	        HTTP(playerid, HTTP_GET,string, " ", "EmailDelivered");//Sends a request to test.php file
-        }
-        return 1;
 }
 
 CMD:motd(playerid, params[])
