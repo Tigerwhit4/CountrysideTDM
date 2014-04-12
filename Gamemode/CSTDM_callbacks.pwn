@@ -98,7 +98,6 @@ new Text:StatsText10;
 new Text:StatsText11;
 new Text:StatsText13;
 new Text3D:labelz[MAX_PLAYERS];
-new Float:xxxx,Float:yyyy,Float:zzzz;
 new Float:posxx[3];
 new MySQL:mysql;
 new field[128];
